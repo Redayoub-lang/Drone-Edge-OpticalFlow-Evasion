@@ -1,19 +1,24 @@
-# Real-Time Edge Obstacle Evasion Engine via Dense Optical Flow
+# Drone Edge Optical Flow Evasion & Blur Detection Engine
 
-![C++17](https://img.shields.io/badge/Language-C%2B%2B17-blue)
-![OpenCV](https://img.shields.io/badge/Library-OpenCV%204.x-green)
+![Python 3](https://img.shields.io/badge/Language-Python%203.10-blue)
+![Computer Vision](https://img.shields.io/badge/Domain-Computer%20Vision%20%26%20Edge%20AI-orange)
 ![Developer](https://img.shields.io/badge/Developer-Ayoub%20Lahmar-brightgreen)
 
-A deterministic, ultra-low-latency C++ navigation engine designed for resource-constrained UAV onboard edge hardware (e.g., Raspberry Pi, Jetson Nano). Evaluates motion field expansion via **Farneback Dense Optical Flow** to compute steering vectors without deep learning overhead.
+An edge-optimized computer vision pipeline designed for real-time UAV obstacle evasion and optical flow tracking. Evaluates frame sharpness via Laplacian variance \(S_{\text{blur}}\) to immediately discard motion-blurred frames and reduce downstream processing latency on resource-constrained embedded platforms.
 
-Implemented by **Ayoub Lahmar** ([@Redayoub-lang](https://github.com/Redayoub-lang)) for application to **Jiangsu University (JSU)**.
+Implemented by **Ayoub Lahmar** ([@Redayoub-lang](https://github.com/Redayoub-lang)).
 
-## 📐 Vector Field Analysis
+## 📐 Mathematical Formulation
 
-Pixel displacement vectors \((u, v)\) map to magnitude field \(M(x,y)\) via polar decomposition:
-M(x,y) = \sqrt{u(x,y)^2 + v(x,y)^2}
-Spatial divergence across camera sub-regions generates a differential steering gradient away from high-density motion expansion zones.
+Frame focus quality is computed using the variance of the Laplacian operator \(\nabla^2 I\):
 
-💻 Compilation
-g++ -std=c++17 -O3 main.cpp -o FlowEvasion `pkg-config --cflags --libs opencv4`
-./FlowEvasion
+$$
+S_{\text{blur}} = \text{Var}\left( \nabla^2 I \right) = \text{Var}\left( \frac{\partial^2 I}{\partial x^2} + \frac{\partial^2 I}{\partial y^2} \right)
+$$
+
+Frames evaluated with \(S_{\text{blur}} < \tau\) are dropped immediately to optimize downstream edge processing workloads.
+
+## 💻 Build & Run
+
+```bash
+python optical_flow_evasion.py
